@@ -1,27 +1,36 @@
-version: '3'
 services:
   prometheus:
     image: prom/prometheus
-    volumes:
-    - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    - ./rules.yml:/etc/prometheus/rules.yml
-    command:
-    - '--config.file=/etc/prometheus/prometheus.yml'
     ports:
-      - '9090:9090'
-    network_mode: "host"
+      - 9090:9090
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/rules.yml:/etc/prometheus/rules.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  node-exporter:
+    image: prom/node-exporter
+    ports:
+      - 9100:9100
 
   grafana:
     image: grafana/grafana
     ports:
-    - '3000:3000'
-    network_mode: "host"
-  
+      - 3000:3000
+
   alertmanager:
-    container_name: alertmanager
     image: prom/alertmanager
-    volumes:
-      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
     ports:
       - 9093:9093
-    network_mode: "host"
+    volumes:
+      - /home/flsilva/desafioO2B/desafio-observabilidade/observability-lab/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+
+  app:
+    build:
+      context: /home/flsilva/desafioO2B/desafio-observabilidade/observability-lab
+      dockerfile: Dockerfile
+    ports:
+      - 3001:3001

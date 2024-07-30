@@ -1,0 +1,10 @@
+groups:
+  - name: ErrorGreaterThan5
+    rules:
+      - alert: ErrorGreaterThan5
+        expr: app_errors_total > 5
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "The number of errors is greater than 5"

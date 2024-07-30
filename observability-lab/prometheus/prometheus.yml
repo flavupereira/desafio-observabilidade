@@ -1,16 +1,28 @@
 global:
-  scrape_interval: 15s
+  scrape_interval: 15s   # Ajuste o intervalo de coleta de métricas conforme necessário
+  evaluation_interval: 30s   # Ajuste o intervalo de avaliação das regras conforme necessário
+
 rule_files:
-  - rules.yml
+  - /etc/prometheus/rules.yml   # Arquivo contendo regras de alerta e outras regras de consulta
+
 alerting:
   alertmanagers:
-  - static_configs:
-    - targets:
-       - localhost:9093
+    - static_configs:
+      - targets:
+        - alertmanager:9093   # Nome do serviço Alertmanager no Docker Compose
+
 scrape_configs:
-- job_name: 'prometheus'
-  static_configs:
-  - targets: ['localhost:9090']
-- job_name: 'your-app'
-  static_configs:
-  - targets: ['localhost:3001']
+  - job_name: 'prometheus'
+    scrape_interval: 10s  # Coleta de métricas do Prometheus a cada 10 segundos
+    static_configs:
+      - targets: ['prometheus:9090']   # Nome do serviço Prometheus no Docker Compose
+
+  - job_name: 'node-exporter'
+    scrape_interval: 15s  # Coleta de métricas do Node Exporter a cada 15 segundos
+    static_configs:
+      - targets: ['node-exporter:9100']   # Nome do serviço Node Exporter no Docker Compose
+
+  - job_name: 'app-py'
+    scrape_interval: 15s  # Coleta de métricas da sua aplicação Python a cada 15 segundos
+    static_configs:
+      - targets: ['app:3001']   # Nome do serviço da sua aplicação no Docker Compose

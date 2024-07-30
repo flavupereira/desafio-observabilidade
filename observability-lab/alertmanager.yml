@@ -1,9 +1,19 @@
 global:
   resolve_timeout: 5m
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_from: 'observabilidade063@gmail.com'
+  smtp_auth_username: 'observabilidade063@gmail.com'
+  smtp_auth_password: 'Brasil@2024'
+  smtp_require_tls: true
+
 route:
-  receiver: webhook_receiver
+  receiver: 'email_receiver'
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 3h
+
 receivers:
-    - name: webhook_receiver
-      webhook_configs:
-        - url: 'https://webhook.site/62e5b561-f020-45cb-9d27-d1abeae67be9'
-          send_resolved: false
+  - name: 'email_receiver'
+    email_configs:
+      - to: 'observabilidade063@gmail.com'
+        send_resolved: true
